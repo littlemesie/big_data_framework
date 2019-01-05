@@ -39,7 +39,7 @@ class ESSearch:
         """
         return self.es_conn.index(index=index, doc_type=doc_type, body=body, id=id, **query_params)
 
-    def search(self, index, doc_type, body, id=None):
+    def search(self, index, doc_type, body, params=None):
         """
         build search
         :param index: index name
@@ -47,7 +47,7 @@ class ESSearch:
         :param body: body
         :return: search result
         """
-        return self.es_conn.search(index=index, doc_type=doc_type, body=body)
+        return self.es_conn.search(index=index, doc_type=doc_type, body=body, params=params)
 
     def get(self, index, doc_type, id, params=None):
         """
