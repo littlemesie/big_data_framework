@@ -39,7 +39,7 @@ class ESSearch:
         """
         return self.es_conn.index(index=index, doc_type=doc_type, body=body, id=id, **query_params)
 
-    def search(self, index, doc_type, body, params=None):
+    def search(self, index, doc_type, body):
         """
         build search
         :param index: index name
@@ -47,7 +47,7 @@ class ESSearch:
         :param body: body
         :return: search result
         """
-        return self.es_conn.search(index=index, doc_type=doc_type, body=body, params=params)
+        return self.es_conn.search(index=index, doc_type=doc_type, body=body)
 
     def get(self, index, doc_type, id, params=None):
         """
@@ -221,7 +221,7 @@ if __name__ == '__main__':
 
 
     result = es.search(index="stuscore", doc_type="logs", body=es_score_body)
-    scores = []
-    for hit in result['hits']['hits']:
-        scores.append(str(hit['_source']['data']['stuScore']))
-    print(scores)
+    # scores = []
+    # for hit in result['hits']['hits']:
+    #     scores.append(str(hit['_source']['data']['stuScore']))
+    print(result)
