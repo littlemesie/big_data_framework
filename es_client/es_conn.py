@@ -185,19 +185,8 @@ class ESSearch:
     def build_stu_score_body(self, stu_no):
         search_body = {
             "size": 0,
-            "query": {
-                "term": {
-                    "stu_no": {
-                        "value": stu_no
-                    }
-                }
-            },
-            "aggs": {
-                "last_request_time": {
-                    "max": {
-                        "field": "@timestamp"
-                    }
-                }
+            "stu_no": {
+                "value": stu_no
             }
         }
         return search_body
@@ -211,12 +200,10 @@ if __name__ == '__main__':
     # print(es_score_body)
     # result = es.index(index="stuscore", doc_type="logs", body=es_score_body)
 
-    result = es.delete(index="stuscore", doc_type="logs", id='iMkOmGgBUodGmVpXdKT0', params='')
+    result = es.search(index="stuscore", doc_type="logs", body='')
     print(result)
-    # result = es.search(index="stuscore", doc_type="logs", body='')
-    # print(result)
-    #
-    # scores = []
-    # for hit in result['hits']['hits']:
-    #     scores.append(str(hit['_score']['data']['stuScore']))
-    # print(scores)
+
+    scores = []
+    for hit in result['hits']['hits']:
+        scores.append(str(hit['_source']['stu_no']['value']))
+    print(scores)
