@@ -39,7 +39,7 @@ class ESSearch:
         """
         return self.es_conn.index(index=index, doc_type=doc_type, body=body, id=id, **query_params)
 
-    def search(self, index, doc_type, body):
+    def search(self, index, doc_type, body, params=None):
         """
         build search
         :param index: index name
@@ -47,6 +47,9 @@ class ESSearch:
         :param body: body
         :return: search result
         """
+        if params:
+            return self.es_conn.search(index=index, doc_type=doc_type, body=body, params=params)
+
         return self.es_conn.search(index=index, doc_type=doc_type, body=body)
 
     def get(self, index, doc_type, id, params=None):
@@ -82,128 +85,99 @@ class ESSearch:
         """
         return self.es_conn.delete(index=index, doc_type=doc_type, id=id, params=params)
 
-    def build_aggs_search_body(self, must_conditions, aggs_result):
-        """
-        build search have aggs
-        :param must_conditions: must conditions
-        :param aggs_result: aggs conditions
-        :return: search body
-        """
-        search_body = {
+    def build_index_body(self, key, value):
+        """构建插入一个字段的body"""
+        body = {
             "size": 0,
+            key: {
+                "value": value
+            }
+        }
+        return body
+
+    def key_word_search_body(self, key, value):
+        """value:1关键词查询,2也可以是短语全文搜索"""
+        body = {
             "query": {
-                "bool": {
-                    "must": must_conditions
+                "match": {
+                    key: value
                 }
+            }
+        }
+        return body
+
+    def range_search_body(self, key, gt_value, lt_value):
+        """范围查询"""
+        body = {
+            "query": {
+                "range": {
+                    key: {"gt": gt_value, "lt": lt_value}
+                }
+
+            }
+        }
+        return body
+
+    def match_phrase_search_body(self, key, value):
+        """短语查询"""
+        body = {
+            "query": {
+                "match_phrase": {
+                    key: value
+                }
+
             },
-            "aggs": aggs_result
-        }
-        return search_body
-
-    @staticmethod
-    def build_must_terms(objs):
-        """
-        build must term
-        :param objs: must term objs
-        :return: aggs body
-        """
-        tmp = []
-        if len(objs) > 0:
-            for (k, v) in objs.items():
-                obj = dict()
-                obj[k] = v
-                obj_term = dict()
-                obj_term['term'] = obj
-                tmp.append(obj_term)
-        return tmp
-
-    @staticmethod
-    def build_normal_aggs(aggs_field):
-        """
-        build normal aggs
-        :param aggs_field: aggs field
-        :return: aggs body
-        """
-        tmp = dict()
-        aggs_result = dict()
-        terms = dict()
-        terms["field"] = aggs_field
-        terms["size"] = 0
-        order = dict()
-        order["_count"] = "desc"
-        terms["order"] = order
-        aggs_result["terms"] = terms
-        tmp["aggs_result"] = aggs_result
-        return tmp
-
-    @staticmethod
-    def build_cardinality_aggs(cardinality_field):
-        """
-        build aggs of cardinality
-        :param cardinality_field: field to compute cardinality
-        :return: aggs body
-        """
-        cardinality_body = {
-            "distinct_msgId": {
-                "cardinality": {
-                    "field": cardinality_field
+            "highlight": {
+                "fields": {
+                    key: {}
                 }
+
             }
         }
-        return cardinality_body
+        return body
 
-    @staticmethod
-    def build_count_aggs(count_field):
-        """
-        build aggs of value_count
-        :param count_field: field to compute count_field
-        :return: aggs body
-        """
-        value_count_body = {
-            "count_of_field": {
-                "value_count": {
-                    "field": count_field
+    def aggs_search_body(self, key, aggregations):
+        """聚合"""
+        body = {
+            "aggs": {
+                aggregations: {
+                    "terms": {'field': key}
                 }
+
             }
         }
-        return value_count_body
-
-    @staticmethod
-    def build_min_aggs(min_field):
-        """
-        build aggs of min
-        :param min_field: field to compute min value
-        :return: aggs body
-        """
-        min_body = {
-            "min_sms_time": {"min": {"field": min_field}}
-        }
-        return min_body
-
-
-
-    def build_stu_score_body(self, stu_no):
-        search_body = {
-            "size": 0,
-            "stu_no": {
-                "value": stu_no
-            }
-        }
-        return search_body
+        return body
 
 
 if __name__ == '__main__':
     """简单的使用"""
     es = ESSearch()
     stu_no = 123456
-    es_score_body = es.build_stu_score_body(stu_no)
-    # print(es_score_body)
+    # es_score_body = es.build_index_body('stu_no',stu_no)
+    # 插入
     # result = es.index(index="stuscore", doc_type="logs", body=es_score_body)
-
-    result = es.search(index="stuscore", doc_type="logs", body='')
+    # 查询所有
+    # result = es.search(index="stuscore", doc_type="logs", body='')
+    # 获取对应的值
+    # scores = []
+    # for hit in result['hits']['hits']:
+    #     scores.append(str(hit['_source']['stu_no']['value']))
+    # 查询100条
+    # result = es.search(index="bank", doc_type="account", body='', params={'size':100})
+    # 关键词查询
+    # key_word_search = es.key_word_search_body('firstname','Ratliff')
+    # result = es.search(index="bank", doc_type="account", body=key_word_search)
+    # 范围查询
+    # filter_search = es.range_search_body('age', 20, 30)
+    # result = es.search(index="bank", doc_type="account", body=filter_search)
+    # 短语查询
+    # match_phrase_search = es.key_word_search_body('address','National Drive')
+    # result = es.search(index="bank", doc_type="account", body=match_phrase_search)
+    # 聚合
+    aggs_search_body = es.aggs_search_body('age','ages')
+    result = es.search(index="bank", doc_type="account", body=aggs_search_body)
     print(result)
+    # for hit in result['hits']['hits']:
+    #     print(hit)
 
-    scores = []
-    for hit in result['hits']['hits']:
-        scores.append(str(hit['_source']['stu_no']['value']))
-    print(scores)
+
