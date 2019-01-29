@@ -4,7 +4,7 @@ from elasticsearch import Elasticsearch
 class ESSearch:
 
     def __init__(self):
-        self.es_conn = Elasticsearch(host='127.0.0.1', port=9201, timeout=60, max_retries=10, retry_on_timeout=True)
+        self.es_conn = Elasticsearch(host='127.0.0.1', port=9200, timeout=60, max_retries=10, retry_on_timeout=True)
 
     def conn(self):
         return self.es_conn
@@ -184,27 +184,19 @@ class ESSearch:
 
     def build_stu_score_body(self, stu_no):
         search_body = {
-            "_source": {
-                "includes": [
-                    "data.stuScore"
-                ]
-            },
+            "size": 0,
             "query": {
-                "bool": {
-                    "must": [
-                        {
-                            "term": {
-                                "data.stuNo": stu_no
-                            }
-                        },
-                        {
-                            "exists": {
-                                "field": "data.stuScore"
-                            }
-                        }
-                    ],
-                    "must_not": [],
-                    "should": []
+                "term": {
+                    "stu_no": {
+                        "value": stu_no
+                    }
+                }
+            },
+            "aggs": {
+                "last_request_time": {
+                    "max": {
+                        "field": "@timestamp"
+                    }
                 }
             }
         }
@@ -219,9 +211,12 @@ if __name__ == '__main__':
     # print(es_score_body)
     # result = es.index(index="stuscore", doc_type="logs", body=es_score_body)
 
-
-    result = es.search(index="stuscore", doc_type="logs", body=es_score_body)
+    result = es.delete(index="stuscore", doc_type="logs", id='iMkOmGgBUodGmVpXdKT0', params='')
+    print(result)
+    # result = es.search(index="stuscore", doc_type="logs", body='')
+    # print(result)
+    #
     # scores = []
     # for hit in result['hits']['hits']:
-    #     scores.append(str(hit['_source']['data']['stuScore']))
-    print(result)
+    #     scores.append(str(hit['_score']['data']['stuScore']))
+    # print(scores)
