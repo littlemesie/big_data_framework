@@ -12,7 +12,7 @@ class AsynNeo4jConn(object):
 
     async def query(self, sql):
         data = await self.__conn.cypher(sql)
-        return hydrate(data)
+        return hydrate.hydrate(data)
 
     async def close(self):
         await self.__conn.close()
