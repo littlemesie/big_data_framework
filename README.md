@@ -5,5 +5,5 @@
 - [kafka](kafka_client/README.md)
 - [redis](redis_client/readme.md)
 - [hbase](hbase_client/readme.md)
-- [neo4j](neo4j-client/readme.md)
+- [neo4j](neo4j_client/readme.md)
 - [spark](spark/readme.md)
