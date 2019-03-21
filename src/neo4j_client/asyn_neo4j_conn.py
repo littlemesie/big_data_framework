@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from aioneo4j import Neo4j
-from neo4j_client import hydrate
+from src.neo4j_client import hydrate
 
 
 class AsynNeo4jConn(object):

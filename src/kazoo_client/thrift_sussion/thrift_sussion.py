@@ -9,7 +9,7 @@ from thrift.protocol import TBinaryProtocol
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 
-from kazoo_client.thrift_sussion.sussion import TSussionService
+from src.kazoo_client.thrift_sussion.sussion import TSussionService
 
 logger = logging.getLogger()
 

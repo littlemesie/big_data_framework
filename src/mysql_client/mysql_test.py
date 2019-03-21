@@ -1,6 +1,6 @@
 import asyncio
-from mysql_client.mysql_conn import MysqlConn
-from mysql_client.pool_wrapper import PoolWrapper
+from src.mysql_client import MysqlConn
+from src.mysql_client import PoolWrapper
 loop = asyncio.get_event_loop()
 """使用例子"""
 class Base_MysqlConn(MysqlConn):

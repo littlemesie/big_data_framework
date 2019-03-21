@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from kafka_client.consumer import Consumer
-from kafka_client.producer import Producer
+from src.kazoo_client import Consumer
+from src.kazoo_client import Producer
 
 def main():
     ##测试生产模块

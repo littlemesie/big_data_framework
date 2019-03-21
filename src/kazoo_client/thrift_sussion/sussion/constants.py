@@ -6,6 +6,3 @@
 #  options string: py
 #
 
-from thrift.Thrift import TType, TMessageType, TException, TApplicationException
-from kazoo_client.thrift_sussion.sussion.ttypes import *
-
