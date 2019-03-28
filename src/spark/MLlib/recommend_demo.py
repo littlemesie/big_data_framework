@@ -7,12 +7,13 @@ from pyspark.mllib.recommendation import ALS
 
 
 def train_model(training, num_iterations=10, rank=1, lambda_=0.01):
+    """ALS交替最小二乘算法"""
     return ALS.train(training.rdd, iterations=num_iterations, rank=rank, lambda_=lambda_, seed=0)
 
 
 def tuning_model(training, test):
+    """自定义模型"""
     testing = test.select(["userId", "movieId"]).rdd
-
     min_mse = 1e6
     best_rank = 10
     best_lambda = 1.0
@@ -42,6 +43,7 @@ def tuning_model(training, test):
 
 
 def recommend_for_all(model, movies, result_path, file_out_flag=False):
+    """推荐所有的用户输入到文件"""
     def parse_recommendations(line):
         res = []
         for item in line[1]:
@@ -59,6 +61,7 @@ def recommend_for_all(model, movies, result_path, file_out_flag=False):
 
 
 def recommend_for_users(model, movies, user_ids):
+    """推荐指定的用户"""
     def recommend_for_one_user(model, user_id):
         b_movies = spark.sparkContext.broadcast(dict((int(l[0]), l[1]) for l in movies.collect()))
         recommendations = model.recommendProducts(user_id, 10)
@@ -75,6 +78,7 @@ def recommend_for_users(model, movies, user_ids):
 
 
 def main(spark, data_path, result_path):
+    # 读取数据
     movies = spark.read.csv(join(data_path, "movies.csv")).rdd.map(
         lambda l: Row(int(l[0]), l[1], l[2])).toDF(["movieId", "title", "genres"])
     ratings = spark.read.csv(join(data_path, "ratings.csv")).rdd.map(
@@ -83,7 +87,7 @@ def main(spark, data_path, result_path):
     all_users = ratings.select("userId").distinct()
     all_movies = ratings.select("movieId").distinct()
     print("Got %d ratings from %d users on %d movies." % (ratings.count(), all_users.count(), all_movies.count()))
-
+    # 切分训练集合测试集
     training, test = ratings.randomSplit([0.8, 0.2], 1)
 
     # 是否使用默认参数，为 False 时从一系列参数中选取最优参数
@@ -109,7 +113,7 @@ def main(spark, data_path, result_path):
 
 if __name__ == "__main__":
     data_path = '../../../data/ml-latest-small/' # 数据目录
-    result_path = '../../../data/result.txt'  # 保存结果目录
+    result_path = '../../../data/result'  # 保存结果目录
 
     spark = SparkSession.builder.appName("MovieLens Recommendation").getOrCreate()
 
