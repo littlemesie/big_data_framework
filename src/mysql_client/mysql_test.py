@@ -15,7 +15,7 @@ class Base_MysqlConn(MysqlConn):
                        user='root',
                        password='123456',
                        db='test',
-                       port='3306',
+                       port=3306,
                        )
 
     """docstring for Base_MysqlConn"""
@@ -24,7 +24,7 @@ class Base_MysqlConn(MysqlConn):
         super(Base_MysqlConn, self).__init__()
 
 async def test():
-    async with Base_MysqlConn as conn:
+    async with Base_MysqlConn() as conn:
         result = await conn.select_one("""select * from xxx where id = xx""")
         await conn.commit()
 
