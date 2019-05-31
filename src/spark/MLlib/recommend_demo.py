@@ -81,6 +81,7 @@ def main(spark, data_path, result_path):
     # 读取数据
     movies = spark.read.csv(join(data_path, "movies.csv")).rdd.map(
         lambda l: Row(int(l[0]), l[1], l[2])).toDF(["movieId", "title", "genres"])
+
     ratings = spark.read.csv(join(data_path, "ratings.csv")).rdd.map(
         lambda l: Row(int(l[0]), int(l[1]), float(l[2]))).toDF(["userId", "movieId", "rating"])
 
