@@ -104,3 +104,8 @@ venv.bak/
 .mypy_cache/
 .idea/
 data/
+.lck
+.ctrl
+.dat
+.txt
+
