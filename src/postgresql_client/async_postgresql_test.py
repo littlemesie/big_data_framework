@@ -15,14 +15,15 @@ class AsyncTestConn(PostgresqlConn):
     """docstring for AsyncTestConn"""
 
     def __init__(self):
-        super(AsyncTestConn, self).__init__(max_size=5,
-                       min_size=1,
-                       host='127.0.0.1',
-                       user='postgres',
-                       password='postgres',
-                       database='aia',
-                       port='5432',
-                       loop=loop)
+        super(AsyncTestConn, self).__init__(
+            max_size=5,
+            min_size=1,
+            host='127.0.0.1',
+            user='postgres',
+            password='postgres',
+            database='aia',
+            port='5432',
+            loop=loop)
 
 
 async def async_t():
