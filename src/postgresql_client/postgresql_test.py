@@ -7,7 +7,7 @@
 @summary:
 """
 import psycopg2
-from psycopg2.extras import DictCursor
+from psycopg2.extras import RealDictCursor
 from postgresql_client.postgresql_conn import PostgresqlConn
 from postgresql_client.pool_wrapper import PoolWrapper
 
@@ -19,12 +19,25 @@ class TestConn(PostgresqlConn):
                        host='127.0.0.1',
                        user='postgres',
                        password='postgres',
-                       database='',
-                       port='',
-                       cursorclass=DictCursor
+                       database='aia',
+                       port='5432',
+                       cursor_factory=RealDictCursor
                        )
 
     """docstring for Base_MysqlConn"""
 
     def __init__(self):
         super(TestConn, self).__init__()
+
+
+
+def t():
+    with TestConn() as conn:
+        data = conn.select_one(
+            """
+            select * from aia_t_icc_jjdb limit 1
+            """
+        )
+    print(data)
+
+# t()

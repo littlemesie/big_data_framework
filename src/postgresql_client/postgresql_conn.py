@@ -14,9 +14,10 @@ class PostgresqlConn(object):
 
     def select_one(self, sql, params=None):
         try:
-            count = self._cur.execute(sql, params)
-            if count > 0:
-                return self._cur.fetchone()
+            self._cur.execute(sql, params)
+            result = self._cur.fetchone()
+            if result:
+                return dict(result)
             else:
                 return None
         except Exception as e:
@@ -25,10 +26,10 @@ class PostgresqlConn(object):
 
     def select_one_value(self, sql, params=None):
         try:
-            count = self._cur.execute(sql, params)
-            if count > 0:
-                result = self._cur.fetchone()
-                return list(result.values())[0]
+            self._cur.execute(sql, params)
+            result = self._cur.fetchone()
+            if result:
+                return list(dict(result).values())[0]
             else:
                 return None
         except Exception as e:
@@ -37,9 +38,10 @@ class PostgresqlConn(object):
 
     def select_many(self, sql, params=None):
         try:
-            count = self._cur.execute(sql, params)
-            if count > 0:
-                return self._cur.fetchall()
+            self._cur.execute(sql, params)
+            result = self._cur.fetchall()
+            if result:
+                return list(map(lambda one: dict(one), result))
             else:
                 return []
         except Exception as e:
@@ -48,10 +50,10 @@ class PostgresqlConn(object):
 
     def select_many_one_value(self, sql, params=None):
         try:
-            count = self._cur.execute(sql, params)
-            if count > 0:
-                result = self._cur.fetchall()
-                return list(map(lambda one: list(one.values())[0], result))
+            self._cur.execute(sql, params)
+            result = self._cur.fetchall()
+            if result:
+                return list(map(lambda one: list(dict(one).values())[0], result))
             else:
                 return []
         except Exception as e:
