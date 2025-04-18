@@ -124,9 +124,6 @@ class PostgresqlConn(object):
             await self.release()
             raise e
 
-    async def begin(self):
-        await self._conn.begin()
-
     async def commit(self):
         try:
             await self._conn.commit()
@@ -135,12 +132,8 @@ class PostgresqlConn(object):
             await self.release()
             raise e
 
-
     async def close(self):
         await self.pool.close()
-
-    def executed(self):
-        return self._conn._executed
 
     async def release(self):
         await self.pool.release(self._conn)
