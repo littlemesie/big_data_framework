@@ -38,7 +38,8 @@ def t():
         sql = f"""
         select md.team_id, md.dataset_id, md.collection_id, md.vector <=> '{emb}' as d
             from  modeldata md
-            where md.vector <=> '{emb}' > 0.5
+            where md.vector <=> '{emb}' > 0.9
+            order by d desc
             limit 10
         
         """
@@ -47,4 +48,4 @@ def t():
         print(data)
 
 
-t()
+# t()
